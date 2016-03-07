@@ -1,8 +1,11 @@
 package kmitl.camsee;
 
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -23,6 +26,10 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -33,12 +40,12 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -46,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
@@ -97,6 +112,46 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://kmitl.camsee/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://kmitl.camsee/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 
     /**
@@ -134,31 +189,21 @@ public class MainActivity extends AppCompatActivity {
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             textView.setText("hello from section " + sectionNumber);
 
-            WebView webView = (WebView)rootView.findViewById(R.id.webView);
+            WebView webView = (WebView) rootView.findViewById(R.id.webView);
             webView.setWebViewClient(new MyWebViewClient());
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setSaveFormData(true);
             webView.getSettings().setBuiltInZoomControls(true);
 
-            Map<String, String> httpHeaders = new HashMap<String, String>();
-//            httpHeaders.put("Host", "192.168.0.253");
-//            httpHeaders.put("Connection", "keep-alive");
-            //httpHeaders.put("Authorization", "Basic b2hla2FuYWU6b2hla2FuYWUxODE5");
-//            httpHeaders.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-//            httpHeaders.put("Upgrade-Insecure-Requests", "1");
-//            httpHeaders.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36");
-//            httpHeaders.put("Referer", "http://192.168.0.253/CgiStart");
-//            httpHeaders.put("Accept-Encoding", "gzip, deflate, sdch");
-//            httpHeaders.put("Accept-Language", "en-US,en;q=0.8,th;q=0.6");
+            //webView.loadUrl("http://192.168.0.253/nphMotionJpeg?Resolution=320x240&Quality=Standard");
+            webView.loadUrl("file:///android_asset/camera.html");
+            //webView.loadUrl("https://www.google.com");
 
-            //webView.loadUrl("file:///android_asset/camera.html", httpHeaders);
-            webView.loadUrl("http://192.168.0.253", httpHeaders);
-
-            Button btn = (Button)rootView.findViewById(R.id.btnUp);
+            Button btn = (Button) rootView.findViewById(R.id.btnUp);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                GetUrl("http://192.168.0.253/nphControlCamera?Direction=TiltUp&Resolution=320x240&Quality=Standard&RPeriod=0&Size=STD&PresetOperation=Move&Language=0");
+                GetUrl("http://192.168.0.253/nphControlCamera?Direction=TiltUp&Resolution=320x240&Quality=Standard&RPeriod=1&Size=STD&PresetOperation=Move&Language=0");
                 }
             });
 
@@ -167,14 +212,21 @@ public class MainActivity extends AppCompatActivity {
 
         private class MyWebViewClient extends WebViewClient {
             @Override
-            public void onReceivedHttpAuthRequest(WebView view,
-                                                  HttpAuthHandler handler, String host, String realm) {
-                handler.proceed("ohekanae", "ohekanae1819");
+            public void onReceivedHttpAuthRequest(
+                    WebView view,
+                    HttpAuthHandler handler,
+                    String host,
+                    String realm) {
+                String username = "ohekanae";
+                String password = "ohekanae1819";
+
+                handler.useHttpAuthUsernamePassword();
+                handler.proceed(username, password);
+                view.setHttpAuthUsernamePassword(host, realm, username, password);
             }
         }
 
-        private void GetUrl(String u)
-        {
+        private void GetUrl(String u) {
             HttpURLConnection urlConnection = null;
             try {
                 URL url = new URL(u);
